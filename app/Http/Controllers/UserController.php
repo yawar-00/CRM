@@ -143,9 +143,8 @@ class UserController extends Controller
         ]);
     
         if (Auth::attempt($data)) {
-            $user = Auth::user();
-            
             // Check if email is verified (has completed OTP verification)
+            $user = Auth::user();
             if (!$user->email_verified_at) {
                 Auth::logout();
                 $otp = rand(100000, 999999);
@@ -153,12 +152,10 @@ class UserController extends Controller
                 $user->otp_expires_at = now()->addMinutes(15);
                 $user->save();
                 Mail::raw("Your registration OTP is: $otp. It will expire in 15 minutes.", function ($message) use ($data) {
-            $message->to($data['email'])->subject('Registration OTP Verification');
-        });
-        
-        return redirect()->route('verify.registration.form')->with('email', $data['email']);
+                $message->to($data['email'])->subject('Registration OTP Verification');
+            });
+             return redirect()->route('verify.registration.form')->with('email', $data['email']);
             }
-            
             return redirect()->route('home');
         }
     
