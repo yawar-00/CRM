@@ -62,7 +62,7 @@ class UserController extends Controller
         }
         
         $email = Session::get('registration_data')['email'];
-        return view('verify-registration', compact('email'));
+        return view('auth.verify-registration', compact('email'));
     }
     
     /**
@@ -156,9 +156,14 @@ class UserController extends Controller
             });
              return redirect()->route('verify.registration.form')->with('email', $data['email']);
             }
+            // $token = $user->createToken('api-token')->plainTextToken;
+            // return response()->json([
+            //     'message' => 'Login successful',
+            //     'token' => $token,
+            //     'user' => $user,
+            // ]);
             return redirect()->route('home');
         }
-    
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->withInput();
@@ -168,10 +173,10 @@ class UserController extends Controller
      * Handle user logout
      */
     public function logout(Request $request){
+        $request->user()->tokens()->delete();
         Auth::guard('web')->logout();
         $request->session()->invalidate(); 
         $request->session()->regenerateToken(); 
-    
         return redirect('/login');
     }
 
@@ -179,7 +184,7 @@ class UserController extends Controller
      * Show forgot password form
      */
     public function showForgotForm() {
-        return view('forgot-password');
+        return view('auth.forgot-password');
     }
 
     /**
@@ -224,8 +229,13 @@ class UserController extends Controller
         ) {
             Session::put('reset_email',$user->email);
             Session::flash('otp_sent', true);
-            
-            return back()->with('email', $email)->withErrors(['otp' => 'Invalid or expired OTP']);
+            if($user->otp !== $request->otp){
+                return back()->with('email', $email)->with('error','Invalid  OTP');
+            }
+            else if(now()->greaterThan($user->otp_expires_at)){
+                return back()->with('email', $email)->with('error','OTP expired');
+            }
+
         }
 
         // Clear OTP
@@ -240,7 +250,7 @@ class UserController extends Controller
      * Show password reset form
      */
     public function showResetForm() {
-        return view('reset-password');
+        return view('auth.reset-password');
     }
 
     /**

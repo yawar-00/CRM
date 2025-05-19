@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,11 +22,11 @@ Route::get('/', function () {
 // Routes with preventBack middleware
 Route::middleware('preventBack')->group(function(){
     Route::get('/login',function(){
-        return view('login');
+        return view('auth.login');
     })->name('login');
     
     Route::get('/register',function(){
-        return view('register');
+        return view('auth.register');
     })->name('register');
     
     // New routes for OTP verification during registration
@@ -49,6 +50,8 @@ Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('
 
 // Authenticated routes
 Route::middleware('auth')->group(function(){
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/logout',[UserController::class,'logout'])->name('logout');
     Route::get('/home',function(){
         return view('home');

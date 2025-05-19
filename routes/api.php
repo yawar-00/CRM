@@ -18,4 +18,10 @@ use App\Http\Controllers\ApiController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/userapi', [ApiController::class, 'index']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/userapi', [ApiController::class, 'index']);
+    Route::post('/users', [ApiController::class, 'store']);
+    Route::put('/users/{id}', [ApiController::class, 'update']);
+    Route::patch('/users/{id}', [ApiController::class, 'updatePartial']);
+    Route::delete('/users/{id}', [ApiController::class,'destroy']);
+});

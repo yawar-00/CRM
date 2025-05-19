@@ -9,9 +9,12 @@
 <form method="POST" action="{{ route('logout') }}">
     @csrf
     <button type="submit">
-    Log Out
-</button>
+        Log Out
+    </button>
 </form>
+<a href="{{route('profile.edit')}}">
+    Edit Profile
+</a>
     <h1> welcome {{Auth::user()->name}}</h1>
 </body>
 </html>
