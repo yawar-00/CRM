@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Session;
+use Intervention\Image\Drivers\Gd\Driver;
 
 
 class UserController extends Controller
@@ -17,40 +20,41 @@ class UserController extends Controller
      */
     public function register(Request $request)
     {   
-
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-        
-        // Store registration data in session
-        Session::put('registration_data', [
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password'],
-        ]);
-        
-        // Generate OTP
-        $otp = rand(100000, 999999);
-        
-        // Create a temporary user record with the OTP
-        // This will be updated with complete details after verification
-        $tempUser = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'otp' => $otp,
-            'otp_expires_at' => now()->addMinutes(15),
-        ]);
-        
-        // Send OTP via email
-        Mail::raw("Your registration OTP is: $otp. It will expire in 15 minutes.", function ($message) use ($data) {
-            $message->to($data['email'])->subject('Registration OTP Verification');
-        });
-        
-        return redirect()->route('verify.registration.form')->with('email', $data['email']);
-    }
+    $data = $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+       
+    ]);
+    
+    
+    
+    // Store registration data in session
+    Session::put('registration_data', [
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'password' => $data['password'],
+    ]);
+    
+    // Generate OTP
+    $otp = rand(100000, 999999);
+    
+    // Create a temporary user record with the OTP
+    $tempUser = User::create([
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'password' => Hash::make($data['password']),
+        'otp' => $otp,
+        'otp_expires_at' => now()->addMinutes(15),
+    ]);
+    
+    // Send OTP via email
+    Mail::raw("Your registration OTP is: $otp. It will expire in 15 minutes.", function ($message) use ($data) {
+        $message->to($data['email'])->subject('Registration OTP Verification');
+    });
+    
+    return redirect()->route('verify.registration.form')->with('email', $data['email']);
+}
     
     /**
      * Show OTP verification form
@@ -173,7 +177,7 @@ class UserController extends Controller
      * Handle user logout
      */
     public function logout(Request $request){
-        $request->user()->tokens()->delete();
+        // $request->user()->tokens()->delete();
         Auth::guard('web')->logout();
         $request->session()->invalidate(); 
         $request->session()->regenerateToken(); 
@@ -271,5 +275,74 @@ class UserController extends Controller
 
         Session::forget('reset_email');
         return redirect()->route('login')->with('message', 'Password reset successfully!');
+    }
+
+
+    /**
+    * Roles and permission
+    */
+    public function index()
+    {
+        $users = User::get();
+        return view('role-permission.user.index', compact('users'));
+    }
+    public function create(){
+        $roles =Role::pluck('name','name')->all();
+        return view('role-permission.user.create',compact('roles'));
+    }
+    public function store(Request $request){
+        $request->validate([
+            'name'=>'required|string|max:255',
+            'email'=>'required|email|max:255|unique:users,email',
+            'password'=>'required|string|min:8|max:20',
+            'roles'=>'required'
+        ]);
+        $user= User::create([
+            'name'=>$request->name,
+            'email'=>$request->email,
+            'password'=>Hash::make($request->password),
+        ]);
+        $user->syncRoles($request->roles);
+        return redirect('users')->with('status','User Created Successfully');
+    }
+    public function edit(User $user)
+    {      
+        $roles = Role::pluck('name','name')->all();
+        $userRoles =$user->roles->pluck('name','name')->all();
+        return view('role-permission.user.edit',
+        [
+            'user'=>$user,
+            'roles'=>$roles,
+            'userRoles'=>$userRoles ,
+        ]);
+    }
+
+    public function update(Request $request,User $user )
+    {
+        $request->validate([
+            'name'=>'required|string|max:255',
+            'password'=>'nullable|string|min:8|max:20',
+            'roles'=>'required'
+           ]);
+            $data=[
+                'name'=>$request->name,
+                'email'=>$request->email,   
+            ];
+            if(!empty($request->password)){
+                $data +=[
+                    'password'=> Hash::make($request->password),
+                ];
+            }
+          
+             $user->update($data);
+             $user->syncRoles($request->roles);
+             return redirect('/users')->with('status','user updated  succesfully with roles ');
+    }
+
+    public function destroy($Id)
+    {
+        $user=User::findOrFail($Id);
+        $user->delete();
+        return redirect('users')->with('status','user deleted   succesfully  with roles ');
     }
 }

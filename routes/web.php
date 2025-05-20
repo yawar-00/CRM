@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,8 +54,26 @@ Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('
 Route::middleware('auth')->group(function(){
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/password', [ProfileController::class, 'editPassword'])->name('password.edit');
+    Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
     Route::post('/logout',[UserController::class,'logout'])->name('logout');
     Route::get('/home',function(){
         return view('home');
     })->middleware('preventSite')->name('home');
+
+    // Roles and Permission
+    Route::resource('permission',PermissionController::class);
+    Route::post('permission/store',[PermissionController::class,'store']);
+    Route::get('permission/{id}/destroy',[PermissionController::class,'destroy']);
+    Route::resource('users',UserController::class);
+    Route::post('users/store',[UserController::class,'store']);
+    Route::get('users/{Id}/destroy',[UserController::class,'destroy']);
+    Route::resource('role',RoleController::class);
+    Route::post('role/store',[RoleController::class,'store']);
+    Route::get('role/{id}/destroy',[RoleController::class,'destroy']);
+    Route::get('role/{id}/give-permissions',[RoleController::class,'addPermissionToRole']);
+    Route::put('role/{id}/give-permissions',[RoleController::class,'givePermissionToRole']);
+
+
+
 });

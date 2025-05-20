@@ -1,228 +1,214 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Forgot Password</title>
+  <title>Forget Password</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     body {
-      background: linear-gradient(135deg, #00b4db, #0083b0);
-      min-height: 100vh;
+      margin: 0 40px;
+      padding: 0;
+      background-color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container-custom {
+      display: flex;
+      height: 100vh;
+    }
+
+    .left-section {
+      flex: 1.2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+    }
+
+    .left-section img {
+      max-width: 90%;
+      height: auto;
+    }
+
+    .right-section {
+      flex: 0.8;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 100px;
+    }
+
+    .form-title {
+      font-size: 36px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      line-height: 1.3;
+    }
+
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ccc;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-family: 'Segoe UI', sans-serif;
+      padding-bottom: 5px;
     }
-    
-    .card {
+
+    .input-wrapper i {
+      margin-right: 10px;
+      color: #000;
+    }
+
+    .input-wrapper input {
       border: none;
-      border-radius: 1.5rem;
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-      padding: 2.5rem;
-      max-width: 450px;
+      outline: none;
+      background: transparent;
       width: 100%;
-      transition: all 0.3s ease;
-      margin: 0 auto;
+      font-size: 16px;
+      padding: 5px 0;
     }
-    
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.25);
-    }
-    
-    .logo-container {
+
+    .resend-form {
+      margin: 20px 0;
       text-align: center;
-      margin-bottom: 1.5rem;
     }
-    
-    .logo {
-      font-size: 2.5rem;
-      color: #0083b0;
-      background: #f8f9fa;
-      width: 70px;
-      height: 70px;
-      line-height: 70px;
-      border-radius: 50%;
-      display: inline-block;
-      box-shadow: 0 5px 15px rgba(0, 131, 176, 0.2);
-    }
-    
-    h2 {
-      text-align: center;
-      margin-bottom: 2rem;
-      color: #333;
-      font-weight: 600;
-    }
-    
-    .form-control {
-      border-radius: 0.75rem;
-      padding: 0.75rem 1rem;
-      border: 1px solid #e0e0e0;
-      box-shadow: none;
-      transition: all 0.3s ease;
-    }
-    
-    .form-control:focus {
-      box-shadow: 0 0 0 3px rgba(0, 131, 176, 0.25);
-      border-color: #0083b0;
-    }
-    
-    .form-label {
-      font-weight: 500;
-      color: #555;
-    }
-    
-    .btn-primary {
-      border-radius: 0.75rem;
-      font-weight: 600;
-      padding: 0.75rem 1.5rem;
-      background: linear-gradient(to right, #00b4db, #0083b0);
+
+    .resend-link {
+      color: #3f79ff;
+      font-size: 14px;
+      background: none;
       border: none;
-      transition: all 0.3s ease;
+      padding: 0;
+      cursor: pointer;
     }
-    
-    .btn-primary:hover {
-      background: linear-gradient(to right, #0083b0, #006f94);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 131, 176, 0.3);
+
+    .resend-link:hover {
+      text-decoration: underline;
     }
-    
-    .error {
-      color: #dc3545;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-      padding: 0.5rem 1rem;
-      background-color: rgba(220, 53, 69, 0.1);
-      border-radius: 0.5rem;
-    }
-    
-    .email-display {
-      background-color: #f8f9fa;
-      border-radius: 0.75rem;
-      padding: 0.75rem 1.25rem;
-      margin-bottom: 1.5rem;
-      border-left: 4px solid #0083b0;
+
+    .btn-custom {
+      width: 100%;
+      background-color: #3f79ff;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
       font-weight: 500;
+      border-radius: 12px;
+      transition: background-color 0.3s ease;
     }
-    
-    .email-value {
-      color: #0083b0;
-      word-break: break-all;
+
+    .btn-custom:hover {
+      background-color: #295fd4;
     }
-    
-    .otp-input {
-      letter-spacing: 3px;
-      font-weight: 600;
-      text-align: center;
-    }
-    
-    .divider {
-      margin: 1.5rem 0;
-      border-top: 1px solid #e0e0e0;
-      position: relative;
-    }
-    
-    .divider-text {
+
+    .back-button {
       position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: white;
-      padding: 0 15px;
-      color: #6c757d;
-      font-size: 0.9rem;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      color: #000;
+      text-decoration: none;
+      z-index: 10;
     }
-    
-    .card-footer {
-      text-align: center;
-      margin-top: 1.5rem;
-      color: #6c757d;
-      font-size: 0.9rem;
+
+    @media (max-width: 768px) {
+      .container-custom {
+        flex-direction: column;
+      }
+
+      .left-section,
+      .right-section {
+        flex: unset;
+        width: 100%;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .right-section {
+        padding: 20px 30px;
+      }
+
+      .form-title {
+        font-size: 28px;
+      }
+
+      .resend-form {
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-12">
-      <div class="card bg-white">
-        <div class="logo-container">
-          <div class="logo">
-            <i class="fas fa-lock"></i>
-          </div>
-        </div>
-        <h2>Password Recovery</h2>
-        
+  <a href="http://127.0.0.1:8000/login" class="back-button">
+    <i class="fas fa-arrow-left"></i>
+  </a>
+
+  <div class="container-custom">
+    <div class="left-section">
+      <img src="http://127.0.0.1:8000/assets/images/forgot-password-illustration.png" alt="Security Image">
+    </div>
+    <div class="right-section">
         @if(session('otp_sent'))
-          <div class="email-display">
-            <i class="fas fa-envelope me-2"></i> Verification code sent to: 
-            <div class="email-value">{{ session('email') }}</div>
+          <div class="form-title">
+            Verify<br>Your OTP
           </div>
-          
           <form action="{{ route('verify.otp') }}" method="POST">
             @csrf
-            <input type="hidden" name="email" value="{{ session('email') }}" required>
-            <div class="mb-4">
-              <label for="otp" class="form-label">Enter Verification Code</label>
-              <input type="text" name="otp" class="form-control otp-input" placeholder="Enter your OTP" required>
-              @if(session('error'))
-                <div class="error">
-                  <i class="fas fa-exclamation-circle me-1"></i> {{ session('error') }}
-                </div>
-              @endif
+            <div class="input-wrapper">
+              <i class="fas fa-envelope"></i>
+              <input type="text" name="otp" placeholder="Enter Your OTP" required>
             </div>
-            <div class="d-grid mb-3">
-              <button type="submit" class="btn btn-primary">
-                <i class="fas fa-check-circle me-2"></i> Verify Code
-              </button>
-            </div>
-          </form>
-          
-          <div class="divider">
-            <span class="divider-text">OR</span>
-          </div>
-          
-          <form action="{{ route('send.otp') }}" method="POST">
-            @csrf
-            <input type="hidden" name="email" value="{{ session('email') }}" required>
-            <div class="d-grid">
-              <button type="submit" class="btn btn-outline-secondary">
-                <i class="fas fa-redo me-2"></i> Resend Verification Code
-              </button>
-            </div>
-          </form>
-          
-        @else
-          <form action="{{ route('send.otp') }}" method="POST">
-            @csrf
-            <div class="mb-4">
-              <label for="email" class="form-label">Email Address</label>
-              <div class="input-group">
-                <span class="input-group-text bg-light border-end-0">
-                  <i class="fas fa-envelope text-muted"></i>
-                </span>
-                <input type="email" name="email" class="form-control border-start-0" placeholder="Enter your email" required>
+            @if(session('error'))
+              <div class="alert alert-danger py-2 text-center">
+                {{ session('error') }}
               </div>
-            </div>
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary">
-                <i class="fas fa-paper-plane me-2"></i> Send Verification Code
+            @endif
+
+            <!-- Resend OTP in center -->
+            <div class="resend-form">
+              <button type="button" class="resend-link" onclick="document.getElementById('resendForm').submit();">
+                Resend OTP
               </button>
             </div>
+
+            <button type="submit" class="btn btn-custom">Verify OTP</button>
+          </form>
+        @else
+        <div class="form-title">
+          Forget<br>Your Password
+        </div>
+        <form action="{{ route('send.otp') }}" method="POST">
+            @csrf
+            <div class="input-wrapper">
+              <i class="fas fa-envelope"></i>
+              <input type="email" name="email" placeholder="Enter Your Email" required>
+            </div>
+             @error('email')
+              <div class="text-danger mb-3" style="margin-top: -10px;">{{ $message }}</div>
+            @enderror
+            <button type="submit" class="btn btn-custom">Send OTP</button>
           </form>
         @endif
-        
-        <div class="card-footer">
-          <p>Remember your password? <a href="{{route('login')}}" class="text-decoration-none">Back to Login</a></p>
-        </div>
-      </div>
     </div>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Hidden Resend OTP Form -->
+ <form id="resendForm" action="{{ route('send.otp') }}" method="POST" >
+    @csrf
+    <input type="hidden" name="email" value="{{ session('email') }}">
+  </form>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+

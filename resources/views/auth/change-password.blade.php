@@ -19,6 +19,7 @@
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       padding: 2rem;
       width: 100%;
+      height:100vh;
     }
     
     .header {
@@ -160,12 +161,7 @@
       color: #495057;
     }
     
-    .custom-file-upload {
-      display: inline-block;
-      cursor: pointer;
-    }
-    
-    .custom-file-input {
+ tom-file-input {
       display: none;
     }
   </style>
@@ -173,58 +169,29 @@
 <body>
 
   <div class="main-container">
-    <div class="header">
-      <div class="app-title">
-        <i class="fas fa-user-edit me-2"></i>User Management
-      </div>
-      <h2>Edit Profile</h2>
+    <div class="section-title">
+        <i class="fas fa-lock me-2"></i>Update Password
     </div>
-    
     @if(session('success'))
       <div class="success">
         <i class="fas fa-check-circle me-1"></i> {{ session('success') }}
       </div>
     @endif
     
-    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('password.update') }}" method="POST" enctype="multipart/form-data">
       @csrf
       @method('PUT')
       
-      <!-- Profile Photo -->
-      <div class="profile-image-container">
-        <img id="preview" src="{{ auth()->user()->profileImg ? asset(auth()->user()->profileImg) : asset('images/default-avatar.png') }}" 
-             alt="Profile Photo" class="profile-image">
-        
-        <div class="image-upload-container">
-          <label for="profileImg" class="btn btn-outline-secondary custom-file-upload">
-            <i class="fas fa-camera me-2"></i>Change Photo
-          </label>
-          <input type="file" name="profileImg" id="profileImg" class="custom-file-input" accept="image/*">
-          
-          @error('profileImg')
-            <div class="error mt-2">
-              <i class="fas fa-exclamation-circle me-1"></i> {{ $message }}
-            </div>
-          @enderror
-          
-          <div class="form-text mt-1">Recommended: Square image, max 2MB</div>
-        </div>
-      </div>
-      
-      <!-- Profile Information -->
-      <div class="section-title">
-        <i class="fas fa-id-card me-2"></i>Profile Information
-      </div>
       
       <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
+        <label for="current_password" class="form-label">Current Password</label>
         <div class="input-group">
           <span class="input-group-text">
-            <i class="fas fa-user text-muted"></i>
+            <i class="fas fa-key text-muted"></i>
           </span>
-          <input type="text" name="name" id="name" class="form-control" value="{{ auth()->user()->name }}" required>
+          <input type="password" name="current_password" id="current_password" class="form-control" placeholder="Enter current password">
         </div>
-        @error('name')
+        @error('current_password')
           <div class="error">
             <i class="fas fa-exclamation-circle me-1"></i> {{ $message }}
           </div>
@@ -232,17 +199,29 @@
       </div>
       
       <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
+        <label for="password" class="form-label">New Password</label>
         <div class="input-group">
           <span class="input-group-text">
-            <i class="fas fa-envelope text-muted"></i>
+            <i class="fas fa-lock text-muted"></i>
           </span>
-          <input type="email" class="form-control" value="{{ auth()->user()->email }}" disabled readonly>
+          <input type="password" name="password" id="password" class="form-control" placeholder="Enter new password">
         </div>
-        <small class="text-muted mt-1 d-block">Your email cannot be changed</small>
+        @error('password')
+          <div class="error">
+            <i class="fas fa-exclamation-circle me-1"></i> {{ $message }}
+          </div>
+        @enderror
       </div>
       
-      <div class="divider"></div>
+      <div class="mb-4">
+        <label for="password_confirmation" class="form-label">Confirm New Password</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="fas fa-lock text-muted"></i>
+          </span>
+          <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Confirm new password">
+        </div>
+      </div>
       
       <div class="d-grid gap-2 d-md-flex justify-content-md-end">
         <button type="submit" class="btn btn-primary">
@@ -259,20 +238,6 @@
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  // Preview uploaded image before form submission
-  document.getElementById('profileImg').addEventListener('change', function(e) {
-    const preview = document.getElementById('preview');
-    const file = e.target.files[0];
-    
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        preview.src = event.target.result;
-      }
-      reader.readAsDataURL(file);
-    }
-  });
-</script>
+
 </body>
 </html>
